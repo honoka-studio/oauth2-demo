@@ -5,7 +5,7 @@ spring:
         # 路由配置的名称，必须保证在本应用中唯一
         - id: auth
           # 要将请求路由到的URI（lb表示负载均衡）
-          uri: lb://spring-security-test-auth
+          uri: lb://oauth2-demo-auth
           # 匹配条件，当本应用收到的请求满足条件时，将使用这个路由规则进行转发
           predicates:
             # 限定路径条件，此处为设置一个前缀匹配规则

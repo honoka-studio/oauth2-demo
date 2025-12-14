@@ -12,7 +12,7 @@ plugins {
     alias(libs.plugins.kotlin.jpa) apply false
 }
 
-group = "de.honoka.test.spring.security"
+group = "de.honoka.demo.spring"
 version = libs.versions.root.get()
 
 subprojects {

@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: spring-security-test-gateway
+    name: oauth2-demo-gateway
   config:
     import:
       - classpath:config/routes.yml
