@@ -105,7 +105,6 @@ class SecurityConfig {
             authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
             authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
             //用户确认授权后，请求以下回调地址，并在请求参数中携带code参数（授权码）
-            redirectUri("http://localhost:8084/login/oauth2/code/$id")
             redirectUri("https://www.baidu.com")
             //设置客户端权限范围
             scope("all")
