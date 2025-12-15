@@ -12,39 +12,39 @@ GET {{auth_base_url}}/user/info/admin
 Authorization: Bearer {{oauth2_token}}
 
 ###
-POST {{auth_base_url}}/user/login
+POST {{auth_base_url}}/user/loginId
 Content-Type: application/json
 
 {
-  "username": "admin"
+  "username": "admin",
+  "password": "123456"
 }
 
-> {% client.global.set('x_token', response.body['data'].token) %}
+> {% client.global.set('loginId', response.body['data']) %}
 
 ###
-# 浏览器打开
 # redirect_uri不可省略，其必须是SecurityConfig中所配置的client的redirectUri中的其中一个，否则报告400
-GET http://localhost:8081/oauth2/authorize?response_type=code&client_id=oauth2-client1&scope=all&redirect_uri=http%3A%2F%2Flocalhost:8084%2Flogin%2Foauth2%2Fcode%2Foauth2-client1
-X-Token: {{x_token}}
+GET http://localhost:8081/oauth2/authorize?response_type=code&client_id=oauth2-client1&scope=all&redirect_uri=https%3A%2F%2Fwww.baidu.com
+X-Login-ID: {{loginId}}
 
 > {%
 　let resIsObject = (typeof response.body) === 'object' && response.body['data'] != null
-  client.global.set('authorize_state', resIsObject ? response.body['data']['consent']['state'] : '')
+  client.global.set('authorize_state', resIsObject ? response.body['data']['state'] : '')
 %}
 
 ###
-GET http://localhost:8081/oauth2/authorize?response_type=code&client_id=oauth2-client1&scope=all&redirect_uri=https%3A%2F%2Fwww.baidu.com
-X-Token: {{x_token}}
+GET http://localhost:8081/oauth2/authorize?response_type=code&client_id=oauth2-client1&scope=all&redirect_uri=http%3A%2F%2Flocalhost:8084%2Flogin%2Foauth2%2Fcode%2Foauth2-client1
+X-Login-ID: {{loginId}}
 
 > {%
 　let resIsObject = (typeof response.body) === 'object' && response.body['data'] != null
-  client.global.set('authorize_state', resIsObject ? response.body['data']['consent']['state'] : '')
+  client.global.set('authorize_state', resIsObject ? response.body['data']['state'] : '')
 %}
 
 ###
 POST {{auth_base_url}}/oauth2/authorize
 Content-Type: application/x-www-form-urlencoded
-X-Token: {{x_token}}
+X-Login-ID: {{loginId}}
 
 client_id=oauth2-client1&state={{authorize_state}}&scope=all
 
@@ -55,7 +55,7 @@ Content-Type: application/x-www-form-urlencoded
 Authorization: Basic b2F1dGgyLWNsaWVudDE6MTIzNDU2
 
 grant_type=authorization_code&code
-=xza9UBJj2YBwEYQiGhu3LGUX7F_lQ4U41Phu6MeBfSMwWTGyPa-SIwI65eNgTSUgvaTPDJgNQFKo1P3fNlEcYxmOiy3R-hyqAOzsjZiPcjNMESoEgUqbmghlzkMxrC5j&redirect_uri=http%3A%2F%2Flocalhost:8084%2Flogin%2Foauth2%2Fcode%2Foauth2-client1
+=Vheh4cILNJEQz8m-hk5App5NYTaWkXNMM5i4DMIZXYbXQ0eNyBu71jN-p8IKCtogEPwrfB6r7SICqvX0gl25Cakq2dWPhh1-Y0OPp239bvZtFxq7jg3142QwAzT8VQ5T&redirect_uri=https%3A%2F%2Fwww.baidu.com
 
 > {% client.global.set('oauth2_token', response.body['access_token']) %}
 
@@ -65,7 +65,7 @@ Content-Type: application/x-www-form-urlencoded
 Authorization: Basic b2F1dGgyLWNsaWVudDE6MTIzNDU2
 
 grant_type=authorization_code&code
-=Jqdy3iCilYJkN_inIJc2b8uhwnh28PQWwzNYZyiLrfSTQwY3IBklLyd249GwEN_YMkZQu2nEE9jnpCYvNVmuH2LsJevnuCQad2snuu4X2QM1gRUAsSwpvJEee3axXDev&redirect_uri=https%3A%2F%2Fwww.baidu.com
+=xza9UBJj2YBwEYQiGhu3LGUX7F_lQ4U41Phu6MeBfSMwWTGyPa-SIwI65eNgTSUgvaTPDJgNQFKo1P3fNlEcYxmOiy3R-hyqAOzsjZiPcjNMESoEgUqbmghlzkMxrC5j&redirect_uri=http%3A%2F%2Flocalhost:8084%2Flogin%2Foauth2%2Fcode%2Foauth2-client1
 
 > {% client.global.set('oauth2_token', response.body['access_token']) %}
 
@@ -93,7 +93,7 @@ GET {{auth_client1_base_url}}/oauth2/authorization/oauth2-client1
 ###
 # @no-redirect
 GET http://localhost:8081/oauth2/authorize?response_type=code&client_id=oauth2-client1&scope=all&state=IXEPPQXVuwCphNggJSaIXZMPUDaHA7OxU8WAEAw_l88%3D&redirect_uri=http://localhost:8084/login/oauth2/code/oauth2-client1
-X-Token: {{x_token}}
+X-Login-ID: {{loginId}}
 
 ###
 GET http://localhost:8084/login/oauth2/code/oauth2-client1?code=4t4pOAZZTRbRQeS4_khYUF_FeQzLxpyJZaFmk0Xb2IJA9yLSm4j4vlsI_lVeCwD0upG_Ypaf_62Cy-j79SoHIDJFFdUdP_OaKr2wSDYaB6vnJh806n7aIuEvWpVuVT2S&state=IXEPPQXVuwCphNggJSaIXZMPUDaHA7OxU8WAEAw_l88%3D

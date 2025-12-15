@@ -1,5 +1,6 @@
 package de.honoka.demo.spring.oauth2.auth.security
 
+import cn.hutool.cache.impl.TimedCache
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -12,15 +13,31 @@ import org.springframework.web.filter.OncePerRequestFilter
  */
 object CustomLoginStatusFilter : OncePerRequestFilter() {
 
-    override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain) {
-        /*
-         * 这里必须使用三个参数的UsernamePasswordAuthenticationToken构造方法，因为两个参数的构造方法会
-         * 将对象中的authenticated字段设为false，而三个参数的构造方法会设为true。
-         */
-        val authentication = UsernamePasswordAuthenticationToken(
-            "user", null, null
-        )
-        SecurityContextHolder.getContext().authentication = authentication
+    override fun doFilterInternal(
+        request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain
+    ) {
+        request.getHeader(LoginIdCache.HEADER)?.let {
+            if(LoginIdCache.cache.containsKey(it)) {
+                /*
+                 * 这里必须使用三个参数的UsernamePasswordAuthenticationToken构造方法，因为两个参数的构造方法会
+                 * 将对象中的authenticated字段设为false，而三个参数的构造方法会设为true。
+                 */
+                SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
+                    it, null, null
+                )
+            }
+        }
         filterChain.doFilter(request, response)
+    }
+}
+
+object LoginIdCache {
+
+    const val HEADER = "X-Login-ID"
+
+    const val TIMEOUT = 20 * 1000L
+
+    val cache = TimedCache<String, String?>(TIMEOUT).apply {
+        schedulePrune(TIMEOUT + 1000L)
     }
 }

@@ -33,11 +33,6 @@ import java.util.*
 @Configuration
 class SecurityConfig {
 
-    companion object {
-
-        val passwordEncoder = BCryptPasswordEncoder()
-    }
-
     /**
      * OAuth2的相关配置
      */
@@ -170,3 +165,5 @@ class SecurityConfig {
     @Bean
     fun passwordEncoder(): PasswordEncoder = passwordEncoder
 }
+
+private val passwordEncoder = BCryptPasswordEncoder()

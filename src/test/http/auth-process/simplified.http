@@ -32,3 +32,5 @@ Authorization: Bearer {{oauth2_token}}
 ###
 GET {{business2_base_url}}/res1
 Authorization: Bearer {{oauth2_token}}
+
+> {% client.global.set('oauth2_token', '') %}

@@ -40,15 +40,17 @@ object AuthenticationEntryPointImpl : AuthenticationEntryPoint {
         request: HttpServletRequest,
         response: HttpServletResponse,
         authException: AuthenticationException?
-    ) = response.run {
-        status = HttpStatus.UNAUTHORIZED.value()
-        addHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
-        outputStream.writer(Charsets.UTF_8).use { os ->
-            var msg = "没有权限访问，请登录"
-            if(authException is BadCredentialsException) {
-                msg = authException.message!!
+    ) {
+        response.run {
+            status = HttpStatus.UNAUTHORIZED.value()
+            addHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+            outputStream.writer(Charsets.UTF_8).use { os ->
+                var msg = "没有权限访问，请登录"
+                if(authException is BadCredentialsException) {
+                    msg = authException.message!!
+                }
+                os.write(JSONObject().set("msg", msg).toString())
             }
-            os.write(JSONObject().set("msg", msg).toString())
         }
     }
 }
@@ -71,11 +73,13 @@ object AccessDeniedHandlerImpl : AccessDeniedHandler {
         request: HttpServletRequest,
         response: HttpServletResponse,
         accessDeniedException: AccessDeniedException?
-    ) = response.run {
-        status = HttpStatus.FORBIDDEN.value()
-        addHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
-        outputStream.writer(Charsets.UTF_8).use {
-            it.write(JSONObject().set("msg", "访问被拒绝").toString())
+    ) {
+        response.run {
+            status = HttpStatus.FORBIDDEN.value()
+            addHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+            outputStream.writer(Charsets.UTF_8).use {
+                it.write(JSONObject().set("msg", "访问被拒绝").toString())
+            }
         }
     }
 }

@@ -31,4 +31,9 @@ class UserController(private val userService: UserService) {
         val res = JSONUtil.parse(userService.login(body))
         ApiResponse.success(res)
     }
+
+    @PostMapping("/loginId")
+    fun loginId(@RequestBody body: JSONObject): ApiResponse<*> = run {
+        ApiResponse.success(userService.newLoginId(body))
+    }
 }
